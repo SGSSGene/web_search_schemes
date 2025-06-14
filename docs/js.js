@@ -96,8 +96,10 @@ window.onload = () => {
     var intervalId = null;
     intervalId = setInterval(() => {
         if (typeof Module != "undefined") {
-            clearInterval(intervalId);
-            init();
+            if (typeof Module.generatorList != "undefined") {
+                clearInterval(intervalId);
+                init();
+            }
         }
     }, 200);
 }
