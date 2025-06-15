@@ -19,25 +19,33 @@
         </div>
         <div id="settings">
             <form id="generator">
-            Generate search scheme<br/>
-            generator: <select id="generator_list"></select><br/>
-            errors: <input id="generator_min_errors" type="number" class="int" value="0"/>-<input id="generator_max_errors" type="number" class="int" value="1"/><br/>
-<!--        alphabet: <input id="generator_alpha" class="int" value="4"><br/>-->
-            <div id="generator_error"></div>
+                <h2>Generate search scheme</h2>
+                <div class="two_columns">
+                    <span>generator:</span> <select id="generator_list"></select>
+                    <span>errors:</span><span><input id="generator_min_errors" type="number" class="int" value="0"/>-<input id="generator_max_errors" type="number" class="int" value="1"/></span>
+                    <div id="generator_error"></div>
+                </div>
             </form>
-            <div>
+            <div id="inputfield">
+                <h2>Search scheme</h2>
                 <textarea spellcheck="false" rows="6" cols="40" id="schemeinput" ></textarea>
                 <div id="errorfield"></div>
             </div>
             <form id="visualization">
-            Visualization<br/>
-            parts: <input id="vis_parts" type="number" class="int" value="8"><br/>
-            Stats</br/>
-            valid: <input id="vis_valid" type="boolean" readonly value="false"><br/>
-            complete: <input id="vis_complete" type="boolean" readonly value="false"><br/>
-            not-redundant: <input id="vis_nonredundant" type="boolean" readonly value="false"><br/>
-            node-count: <input id="vis_nodecount" type=number" readonly value="0"><br/>
-            weighted-node-count: <input id="vis_weightednodecount" type="number" readonly value="0"><br/>
+                <h2>Visualization</h2>
+                <div class="two_columns">
+                    <span>parts:</span><input id="vis_parts" type="number" class="int" value="8">
+                </div>
+            </form>
+            <form id="stats">
+                <h2>Statistics</h2>
+                <div class="two_columns">
+                    <span>valid:</span><input id="vis_valid" type="boolean" readonly value="false">
+                    <span>complete:</span><input id="vis_complete" type="boolean" readonly value="false">
+                    <span>not-redundant:</span><input id="vis_nonredundant" type="boolean" readonly value="false">
+                    <span>node-count:</span><input id="vis_nodecount" type=number" readonly value="0">
+                    <span>weighted-node-count:</span><input id="vis_weightednodecount" type="number" readonly value="0">
+                </div>
             </form>
         </div>
         <div id="canvas"><div>

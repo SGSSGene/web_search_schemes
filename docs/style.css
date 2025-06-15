@@ -9,6 +9,17 @@ body {
     display: flex;
     flex-direction: column;
 }
+h2 {
+    font-weight: bold;
+    font-size: 1em;
+    margin: 0px;
+    margin-bottom: 15px;
+}
+.two_columns {
+    display: grid;
+    grid-template-columns: auto auto;
+    gap: 5px;
+}
 #dialog_loading {
     width: 100%;
     height: 100%;
@@ -43,20 +54,26 @@ body {
     display: flex;
     flex-direction: row;
 }
-#generator, #visualization {
+#generator, #inputfield, #visualization, #stats {
     border: 1px solid black;
-    padding: 15px;
+    padding: 10px 15px;
     border-radius: 5px;
+    margin-right: 5px;
+    display: flex;
+    flex-direction: column;
+}
+#inputfield > textarea {
+    flex-grow: 1;
 }
 
-#visualization > input[readonly] {
+#stats input[readonly] {
     background-color: #CCCCCC;
 }
 
-#visualization > input.failed {
+#stats input.failed {
     background-color: #ff8080;
 }
-#visualization > input {
+#stats input {
     width: 4em;
 }
 
