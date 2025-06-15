@@ -13,30 +13,32 @@
 namespace convertsvg {
 
 template <typename CB>
-auto visitTree(fmindex_collection::search_scheme::Search s, size_t x, size_t pos, CB cb, size_t errors) -> size_t {
+auto visitTree(fmindex_collection::search_scheme::Search s, size_t x, size_t pos, size_t sigma, CB cb, size_t errors) -> size_t {
     if (pos == s.pi.size()) return 1;
 
     size_t width{1};
     if (s.l[pos] <= errors) {
         cb(x, pos, 0, [&]() {
-            width = visitTree(s, x, pos+1, cb, errors);
+            width = visitTree(s, x, pos+1, sigma, cb, errors);
         });
     }
     if (errors+1 <= s.u[pos]) {
-        cb(x+width, pos, 1, [&]() {
-            width += visitTree(s, x+width, pos+1, cb, errors+1);
-        });
+        for (size_t symb{1}; symb < sigma; ++symb) {
+            cb(x+width, pos, 1, [&]() {
+                width += visitTree(s, x+width, pos+1, sigma, cb, errors+1);
+            });
+        }
     }
     return width;
 }
 
 template <typename CB>
-void visitTree(fmindex_collection::search_scheme::Search s, CB cb) {
+void visitTree(fmindex_collection::search_scheme::Search s, size_t sigma, CB cb) {
     auto errorConf = std::vector<int>{};
-    visitTree(s, 0, 0, cb, 0);
+    visitTree(s, 0, 0, sigma, cb, 0);
 }
 
-auto convertToSvg(fmindex_collection::search_scheme::Scheme _scheme, int newLen) -> std::string {
+auto convertToSvg(fmindex_collection::search_scheme::Scheme _scheme, int newLen, size_t sigma) -> std::string {
 
     size_t spaceXBetweenTrees = 30;
     size_t spaceBetweenNodes = 10;
@@ -50,7 +52,7 @@ auto convertToSvg(fmindex_collection::search_scheme::Scheme _scheme, int newLen)
 
         // compute largest x/y
         size_t maxX{}, maxY{};
-        visitTree(s, [&](size_t _x, size_t pos, size_t dir, auto const& rec) {
+        visitTree(s, sigma, [&](size_t _x, size_t pos, size_t dir, auto const& rec) {
             maxX = std::max(maxX, _x*spaceBetweenNodes);
             maxY = std::max(maxY, (1+pos)*spaceBetweenNodes);
             rec();
@@ -78,7 +80,7 @@ auto convertToSvg(fmindex_collection::search_scheme::Scheme _scheme, int newLen)
 
         auto node = std::vector<std::tuple<size_t, size_t>>{};
         node.emplace_back(0, 0);
-        visitTree(s, [&](size_t _x, size_t pos, size_t dir, auto const& rec) {
+        visitTree(s, sigma, [&](size_t _x, size_t pos, size_t dir, auto const& rec) {
             auto [px, py] = node.back();
             auto x = _x*spaceBetweenNodes;
             auto y = (1+pos)*spaceBetweenNodes;
@@ -98,7 +100,7 @@ auto convertToSvg(fmindex_collection::search_scheme::Scheme _scheme, int newLen)
 
         // compute largest x/y
         size_t maxX{}, maxY{};
-        visitTree(s, [&](size_t _x, size_t pos, size_t dir, auto const& rec) {
+        visitTree(s, sigma, [&](size_t _x, size_t pos, size_t dir, auto const& rec) {
             maxX = std::max(maxX, _x*spaceBetweenNodes);
             maxY = std::max(maxY, (1+pos)*spaceBetweenNodes);
             rec();

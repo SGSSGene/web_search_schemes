@@ -94,12 +94,12 @@ auto convertSearchScheme(std::string text) -> fmindex_collection::search_scheme:
     return scheme;
 }
 
-auto convertSearchSchemeToSvg(std::string text, size_t parts) -> std::string {
+auto convertSearchSchemeToSvg(std::string text, size_t parts, size_t sigma) -> std::string {
     std::cout << "converting search scheme to svg\n";
     auto scheme = convertSearchScheme(text);
     auto res = std::string{};
 
-    res = convertsvg::convertToSvg(scheme, parts);
+    res = convertsvg::convertToSvg(scheme, parts, sigma);
 
     return res;
 }
@@ -131,16 +131,16 @@ auto isSearchSchemeNonRedundant(std::string text) -> bool {
     return isNonRedundant(scheme, minK, maxK);
 }
 
-auto nodeCount(std::string text, size_t len) -> double {
+auto nodeCount(std::string text, size_t len, size_t sigma) -> double {
     auto scheme = convertSearchScheme(text);
     auto os = expand(scheme, len);
 
-    return nodeCount</*.Edit=*/false>(os, 4) + os.size();
+    return nodeCount</*.Edit=*/false>(os, sigma) + os.size();
 }
-auto weightedNodeCount(std::string text, size_t len) -> double {
+auto weightedNodeCount(std::string text, size_t len, size_t sigma) -> double {
     auto scheme = convertSearchScheme(text);
     auto os = expand(scheme, len);
-    return weightedNodeCount</*.Edit=*/false>(os, 4, 1'000'000'000) + os.size();
+    return weightedNodeCount</*.Edit=*/false>(os, sigma, 1'000'000'000) + os.size();
 
 }
 

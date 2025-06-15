@@ -6,6 +6,7 @@ let schemeinputtag           = document.getElementById("schemeinput");
 let errorfieldtag            = document.getElementById("errorfield");
 let canvastag                = document.getElementById("canvas");
 let vis_partstag             = document.getElementById("vis_parts");
+let vis_alphabettag          = document.getElementById("vis_alphabet");
 let vis_validtag             = document.getElementById("vis_valid");
 let vis_completetag          = document.getElementById("vis_complete");
 let vis_nonredundanttag      = document.getElementById("vis_nonredundant");
@@ -17,7 +18,9 @@ let search_scheme_reload = () => {
     let input = schemeinput.value + "\n";
     try {
         let parts = Number(vis_partstag.value);
-        let data = Module.convertSearchSchemeToSvg(input, parts);
+        let alphabet = Number(vis_alphabettag.value);
+
+        let data = Module.convertSearchSchemeToSvg(input, parts, alphabet);
         let isValid        = Boolean(Module.isSearchSchemeValid(input));
         let isComplete     = Boolean(Module.isSearchSchemeComplete(input));
         let isNonRedundant = Boolean(Module.isSearchSchemeNonRedundant(input));
@@ -32,8 +35,8 @@ let search_scheme_reload = () => {
         if (!isComplete) vis_completetag.classList.add("failed");
         if (!isNonRedundant) vis_nonredundanttag.classList.add("failed");
 
-        let nodeCount = Number(Module.nodeCount(input, parts));
-        let weightedNodeCount = Number(Module.weightedNodeCount(input, parts));
+        let nodeCount = Module.nodeCount(input, parts, alphabet);
+        let weightedNodeCount = Module.weightedNodeCount(input, parts, alphabet);
         vis_nodecounttag.value = nodeCount;
         vis_weightednodecounttag.value = weightedNodeCount;
 
@@ -69,6 +72,7 @@ generator_min_errorstag.oninput = regenerate;
 generator_max_errorstag.oninput = regenerate;
 
 vis_partstag.oninput = search_scheme_reload;
+vis_alphabettag.oninput = search_scheme_reload;
 
 function init() {
     let dialogtag = document.getElementById("dialog_loading");
