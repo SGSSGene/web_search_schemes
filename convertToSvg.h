@@ -13,32 +13,55 @@
 namespace convertsvg {
 
 template <typename CB>
-auto visitTree(fmindex_collection::search_scheme::Search s, size_t x, size_t pos, size_t sigma, CB cb, size_t errors) -> size_t {
+auto visitTree(fmindex_collection::search_scheme::Search s, size_t x, size_t pos, size_t sigma, CB cb, size_t errors, bool editdistance) -> size_t {
     if (pos == s.pi.size()) return 1;
 
     size_t width{1};
     if (s.l[pos] <= errors) {
         cb(x, pos, 0, [&]() {
-            width = visitTree(s, x, pos+1, sigma, cb, errors);
+            width = visitTree(s, x, pos+1, sigma, cb, errors, editdistance);
         });
     }
     if (errors+1 <= s.u[pos]) {
+        // substitutions
         for (size_t symb{1}; symb < sigma; ++symb) {
             cb(x+width, pos, 1, [&]() {
-                width += visitTree(s, x+width, pos+1, sigma, cb, errors+1);
+                width += visitTree(s, x+width, pos+1, sigma, cb, errors+1, editdistance);
             });
+        }
+
+        // insertions
+        if (editdistance) {
+            size_t extra = 1;
+            if (pos+1 >= s.pi.size()) { // avoid last node dropping out at the bottom
+                extra = 0;
+            }
+            cb(x+width, pos+extra, 3, [&]() {
+                width += visitTree(s, x+width, pos+1, sigma, cb, errors+1, editdistance);
+            });
+        }
+
+        // deletions
+        if (editdistance) {
+            for (size_t symb{1}; symb < sigma; ++symb) {
+                cb(x+width, pos-1, 2, [&]() {
+                    width += visitTree(s, x+width, pos, sigma, cb, errors+1, editdistance);
+                });
+            }
         }
     }
     return width;
 }
 
 template <typename CB>
-void visitTree(fmindex_collection::search_scheme::Search s, size_t sigma, CB cb) {
+void visitTree(fmindex_collection::search_scheme::Search s, size_t sigma, bool editdistance, CB cb) {
     auto errorConf = std::vector<int>{};
-    visitTree(s, 0, 0, sigma, cb, 0);
+    visitTree(s, 0, 0, sigma, cb, 0, editdistance);
 }
 
-auto convertToSvg(fmindex_collection::search_scheme::Scheme _scheme, int newLen, size_t sigma) -> std::string {
+auto convertToSvg(fmindex_collection::search_scheme::Scheme _scheme, int newLen, size_t sigma, bool editdistance) -> std::string {
+
+    //editdistance // todo
 
     size_t spaceXBetweenTrees = 30;
     size_t spaceBetweenNodes = 10;
@@ -52,7 +75,7 @@ auto convertToSvg(fmindex_collection::search_scheme::Scheme _scheme, int newLen,
 
         // compute largest x/y
         size_t maxX{}, maxY{};
-        visitTree(s, sigma, [&](size_t _x, size_t pos, size_t dir, auto const& rec) {
+        visitTree(s, sigma, editdistance, [&](size_t _x, size_t pos, size_t dir, auto const& rec) {
             maxX = std::max(maxX, _x*spaceBetweenNodes);
             maxY = std::max(maxY, (1+pos)*spaceBetweenNodes);
             rec();
@@ -80,15 +103,23 @@ auto convertToSvg(fmindex_collection::search_scheme::Scheme _scheme, int newLen,
 
         auto node = std::vector<std::tuple<size_t, size_t>>{};
         node.emplace_back(0, 0);
-        visitTree(s, sigma, [&](size_t _x, size_t pos, size_t dir, auto const& rec) {
+        visitTree(s, sigma, editdistance, [&](size_t _x, size_t pos, size_t dir, auto const& rec) {
             auto [px, py] = node.back();
             auto x = _x*spaceBetweenNodes;
             auto y = (1+pos)*spaceBetweenNodes;
+
+            if (dir == 2) {
+                y += 1;
+            }
             out += fmt::format(R"(<circle cx="{}" cy="{}" r="{}" />{})", offsetX + x, offsetY+y, spaceBetweenNodes/3, "\n");
 
             auto stroke = std::string{};
             if (dir == 1) {
                 stroke = R"(stroke-dasharray="2 1")";
+            }
+
+            if (dir == 2 || dir == 3) {
+                stroke = R"(stroke-dasharray="1 2")";
             }
 
             out += fmt::format(R"(<line x1="{}" y1="{}" x2="{}" y2="{}" stroke="black" {} />{})", offsetX+px, offsetY+py, offsetX+x, offsetY+y, stroke, "\n");
@@ -100,7 +131,7 @@ auto convertToSvg(fmindex_collection::search_scheme::Scheme _scheme, int newLen,
 
         // compute largest x/y
         size_t maxX{}, maxY{};
-        visitTree(s, sigma, [&](size_t _x, size_t pos, size_t dir, auto const& rec) {
+        visitTree(s, sigma, editdistance, [&](size_t _x, size_t pos, size_t dir, auto const& rec) {
             maxX = std::max(maxX, _x*spaceBetweenNodes);
             maxY = std::max(maxY, (1+pos)*spaceBetweenNodes);
             rec();

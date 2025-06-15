@@ -94,12 +94,12 @@ auto convertSearchScheme(std::string text) -> fmindex_collection::search_scheme:
     return scheme;
 }
 
-auto convertSearchSchemeToSvg(std::string text, size_t parts, size_t sigma) -> std::string {
+auto convertSearchSchemeToSvg(std::string text, size_t parts, size_t sigma, bool editdistance) -> std::string {
     std::cout << "converting search scheme to svg\n";
     auto scheme = convertSearchScheme(text);
     auto res = std::string{};
 
-    res = convertsvg::convertToSvg(scheme, parts, sigma);
+    res = convertsvg::convertToSvg(scheme, parts, sigma, editdistance);
 
     return res;
 }
@@ -131,17 +131,22 @@ auto isSearchSchemeNonRedundant(std::string text) -> bool {
     return isNonRedundant(scheme, minK, maxK);
 }
 
-auto nodeCount(std::string text, size_t len, size_t sigma) -> double {
+auto nodeCount(std::string text, size_t len, size_t sigma, bool editdistance) -> double {
     auto scheme = convertSearchScheme(text);
     auto os = expand(scheme, len);
 
+    if (editdistance) {
+        return nodeCount</*.Edit=*/true>(os, sigma) + os.size();
+    }
     return nodeCount</*.Edit=*/false>(os, sigma) + os.size();
 }
-auto weightedNodeCount(std::string text, size_t len, size_t sigma) -> double {
+auto weightedNodeCount(std::string text, size_t len, size_t sigma, bool editdistance) -> double {
     auto scheme = convertSearchScheme(text);
     auto os = expand(scheme, len);
+    if (editdistance) {
+        return weightedNodeCount</*.Edit=*/true>(os, sigma, 1'000'000'000) + os.size();
+    }
     return weightedNodeCount</*.Edit=*/false>(os, sigma, 1'000'000'000) + os.size();
-
 }
 
 EMSCRIPTEN_BINDINGS(my_module) {

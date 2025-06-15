@@ -7,6 +7,7 @@ let errorfieldtag            = document.getElementById("errorfield");
 let canvastag                = document.getElementById("canvas");
 let vis_partstag             = document.getElementById("vis_parts");
 let vis_alphabettag          = document.getElementById("vis_alphabet");
+let vis_editdistancetag      = document.getElementById("vis_editdistance");
 let vis_validtag             = document.getElementById("vis_valid");
 let vis_completetag          = document.getElementById("vis_complete");
 let vis_nonredundanttag      = document.getElementById("vis_nonredundant");
@@ -19,11 +20,12 @@ let search_scheme_reload = () => {
     try {
         let parts = Number(vis_partstag.value);
         let alphabet = Number(vis_alphabettag.value);
+        let editdistance = vis_editdistancetag.checked;
 
-        let data = Module.convertSearchSchemeToSvg(input, parts, alphabet);
-        let isValid        = Boolean(Module.isSearchSchemeValid(input));
-        let isComplete     = Boolean(Module.isSearchSchemeComplete(input));
-        let isNonRedundant = Boolean(Module.isSearchSchemeNonRedundant(input));
+        let data                  = Module.convertSearchSchemeToSvg(input, parts, alphabet, editdistance);
+        let isValid               = Module.isSearchSchemeValid(input);
+        let isComplete            = Module.isSearchSchemeComplete(input);
+        let isNonRedundant        = Module.isSearchSchemeNonRedundant(input);
         vis_validtag.value        = isValid;
         vis_completetag.value     = isComplete;
         vis_nonredundanttag.value = isNonRedundant;
@@ -35,13 +37,13 @@ let search_scheme_reload = () => {
         if (!isComplete) vis_completetag.classList.add("failed");
         if (!isNonRedundant) vis_nonredundanttag.classList.add("failed");
 
-        let nodeCount = Module.nodeCount(input, parts, alphabet);
-        let weightedNodeCount = Module.weightedNodeCount(input, parts, alphabet);
+        let nodeCount = Module.nodeCount(input, parts, alphabet, editdistance);
+        let weightedNodeCount = Module.weightedNodeCount(input, parts, alphabet, editdistance);
         vis_nodecounttag.value = nodeCount;
         vis_weightednodecounttag.value = weightedNodeCount;
 
-        console.log(data.length);
-        console.log(data);
+//        console.log(data.length);
+//        console.log(data);
         canvastag.innerHTML = data;
         errorfieldtag.innerHTML = "";
     } catch(err) {
@@ -62,7 +64,7 @@ let regenerate = () => {
     let gen = generator_listtag.value;
     let minK = generator_min_errorstag.value;
     let maxK = generator_max_errorstag.value;
-    console.log(`generator ${gen} for ${minK}-${maxK} errors`);
+    //console.log(`generator ${gen} for ${minK}-${maxK} errors`);
     schemeinputtag.value = Module.generateSearchScheme(gen, Number(minK), Number(maxK));
     search_scheme_reload();
 }
@@ -73,6 +75,7 @@ generator_max_errorstag.oninput = regenerate;
 
 vis_partstag.oninput = search_scheme_reload;
 vis_alphabettag.oninput = search_scheme_reload;
+vis_editdistancetag.oninput = search_scheme_reload;
 
 function init() {
     let dialogtag = document.getElementById("dialog_loading");
