@@ -97,38 +97,6 @@ auto convertToSvg(fmindex_collection::search_scheme::Scheme _scheme, int newLen,
         assert(os);
         auto s = limitToHamming(*os);
 
-
-        // walk through and detect tree sizes
-        out += fmt::format(R"(<circle cx="{}" cy="{}" r="{}" />{})", 0+offsetX, 0+offsetY, spaceBetweenNodes/3, "\n");
-
-        auto node = std::vector<std::tuple<size_t, size_t>>{};
-        node.emplace_back(0, 0);
-        visitTree(s, sigma, editdistance, [&](size_t _x, size_t pos, size_t dir, auto const& rec) {
-            auto [px, py] = node.back();
-            auto x = _x*spaceBetweenNodes;
-            auto y = (1+pos)*spaceBetweenNodes;
-
-            if (dir == 2) {
-                y += 1;
-            }
-            out += fmt::format(R"(<circle cx="{}" cy="{}" r="{}" />{})", offsetX + x, offsetY+y, spaceBetweenNodes/3, "\n");
-
-            auto stroke = std::string{};
-            if (dir == 1) {
-                stroke = R"(stroke-dasharray="2 1")";
-            }
-
-            if (dir == 2 || dir == 3) {
-                stroke = R"(stroke-dasharray="1 2")";
-            }
-
-            out += fmt::format(R"(<line x1="{}" y1="{}" x2="{}" y2="{}" stroke="black" {} />{})", offsetX+px, offsetY+py, offsetX+x, offsetY+y, stroke, "\n");
-
-            node.emplace_back(x, y);
-            rec();
-            node.pop_back();
-        });
-
         // compute largest x/y
         size_t maxX{}, maxY{};
         visitTree(s, sigma, editdistance, [&](size_t _x, size_t pos, size_t dir, auto const& rec) {
@@ -137,28 +105,84 @@ auto convertToSvg(fmindex_collection::search_scheme::Scheme _scheme, int newLen,
             rec();
         });
 
-        auto partition = std::vector<size_t>{};
+
+        // draw all partition lines
         {
-            size_t extra = newLen % search.pi.size();
-            size_t size = newLen / search.pi.size();
+            auto partition = std::vector<size_t>{};
+            {
+                size_t extra = newLen % search.pi.size();
+                size_t size = newLen / search.pi.size();
+                for (size_t i{0}; i < search.pi.size(); ++i) {
+                    partition.push_back(size);
+                    if (extra > 0) {
+                        partition.back() += 1;
+                        extra -= 1;
+                    }
+                }
+            }
+
+            size_t accJ{};
             for (size_t i{0}; i < search.pi.size(); ++i) {
-                partition.push_back(size);
-                if (extra > 0) {
-                    partition.back() += 1;
-                    extra -= 1;
+                size_t oldY = accJ * spaceBetweenNodes;
+                accJ += partition[search.pi[i]];
+                size_t y = accJ * spaceBetweenNodes;
+                out += fmt::format(R"(<text x="{}" y="{}">P{}</text>{})", int(offsetX)-10, offsetY + (y + oldY)/2, search.pi[i], "\n");
+                if (i+1 != search.pi.size()) {
+                    out += fmt::format(R"(<line x1="{}" y1="{}" x2="{}" y2="{}" stroke="black" stroke-width="0.5" />{})", int(offsetX)-5, offsetY+y, offsetX+maxX+5, offsetY+y, "\n");
                 }
             }
         }
 
-        size_t accJ{};
-        for (size_t i{0}; i < search.pi.size(); ++i) {
-            size_t oldY = accJ * spaceBetweenNodes;
-            accJ += partition[search.pi[i]];
-            size_t y = accJ * spaceBetweenNodes;
-            out += fmt::format(R"(<text x="{}" y="{}">P{}</text>{})", int(offsetX)-10, offsetY + (y + oldY)/2, search.pi[i], "\n");
-            if (i+1 != search.pi.size()) {
-                out += fmt::format(R"(<line x1="{}" y1="{}" x2="{}" y2="{}" stroke="black" stroke-width="0.5" />{})", int(offsetX)-5, offsetY+y, offsetX+maxX+5, offsetY+y, "\n");
-            }
+        // draw connecting lines
+        {
+            auto node = std::vector<std::tuple<size_t, size_t>>{};
+            node.emplace_back(0, 0);
+            visitTree(s, sigma, editdistance, [&](size_t _x, size_t pos, size_t dir, auto const& rec) {
+                auto [px, py] = node.back();
+                auto x = _x*spaceBetweenNodes;
+                auto y = (1+pos)*spaceBetweenNodes;
+
+                if (dir == 2) {
+                    y += 1;
+                }
+
+                auto stroke = std::string{};
+                if (dir == 1) {
+                    stroke = R"(stroke-dasharray="2 1")";
+                }
+
+                if (dir == 2 || dir == 3) {
+                    stroke = R"(stroke-dasharray="1 2")";
+                }
+
+                out += fmt::format(R"(<line x1="{}" y1="{}" x2="{}" y2="{}" stroke="black" {} />{})", offsetX+px, offsetY+py, offsetX+x, offsetY+y, stroke, "\n");
+
+                node.emplace_back(x, y);
+                rec();
+                node.pop_back();
+            });
+        }
+        // draw circles
+        {
+            // walk through and detect tree sizes
+            out += fmt::format(R"(<circle cx="{}" cy="{}" r="{}" />{})", 0+offsetX, 0+offsetY, spaceBetweenNodes/3, "\n");
+
+            auto node = std::vector<std::tuple<size_t, size_t>>{};
+            node.emplace_back(0, 0);
+            visitTree(s, sigma, editdistance, [&](size_t _x, size_t pos, size_t dir, auto const& rec) {
+                auto [px, py] = node.back();
+                auto x = _x*spaceBetweenNodes;
+                auto y = (1+pos)*spaceBetweenNodes;
+
+                if (dir == 2) {
+                    y += 1;
+                }
+                out += fmt::format(R"(<circle cx="{}" cy="{}" r="{}" />{})", offsetX + x, offsetY+y, spaceBetweenNodes/3, "\n");
+
+                node.emplace_back(x, y);
+                rec();
+                node.pop_back();
+            });
         }
 
         offsetX += maxX + spaceXBetweenTrees;
