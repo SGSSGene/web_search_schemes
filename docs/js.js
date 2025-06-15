@@ -71,6 +71,9 @@ generator_max_errorstag.oninput = regenerate;
 vis_partstag.oninput = search_scheme_reload;
 
 function init() {
+    let dialogtag = document.getElementById("dialog_loading");
+    dialogtag.style.visibility = "hidden";
+
     let genList = Module.generatorList();
     for (let i = 0; i < genList.size(); ++i) {
         let name = genList.get(i);
@@ -93,13 +96,19 @@ schemeinputtag.oninput = () => {
 }
 
 window.onload = () => {
-    var intervalId = null;
-    intervalId = setInterval(() => {
+    checkAvailable = () => {
         if (typeof Module != "undefined") {
             if (typeof Module.generatorList != "undefined") {
-                clearInterval(intervalId);
-                init();
+                return true;
             }
+        }
+        return false;
+    }
+    let intervalId = null;
+    intervalId = setInterval(() => {
+        if (checkAvailable()) {
+            clearInterval(intervalId);
+            init();
         }
     }, 200);
 }
