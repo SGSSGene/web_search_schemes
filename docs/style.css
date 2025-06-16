@@ -83,15 +83,21 @@ svg circle {
 svg line {
     z-index: 0;
 }
-svg circle:hover {
-    fill: green;
-}
 svg circle[data-hovered="true"] {
     fill: green;
+    filter: url(#glow);
 }
 svg line[data-hovered="true"] {
     stroke: green;
 }
+
+svg circle[data-selected="true"] {
+    fill: green;
+}
+svg line[data-selected="true"] {
+    stroke: green;
+}
+
 
 .int {
     width: 3em;

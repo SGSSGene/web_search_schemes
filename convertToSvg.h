@@ -89,6 +89,22 @@ auto convertToSvg(fmindex_collection::search_scheme::Scheme _scheme, int newLen,
 
     auto out = fmt::format(R"(<svg viewBox="{} {} {} {}" xmlns="http://www.w3.org/2000/svg">{})", -int(spaceBetweenNodes), -int(spaceBetweenNodes)/2, tmaxX+spaceBetweenNodes*2, tmaxY+spaceBetweenNodes, "\n");
 
+    // add some glow effect filter:
+    out += fmt::format(R"(
+<defs>
+  <filter id="glow" filterUnits="userSpaceOnUse" x="-50%" y="-50%" width="200%" height="200%">
+     <!-- blur the text at different levels-->
+    <feGaussianBlur in="SourceGraphic" stdDeviation="0.5" result="blur"/>
+    <feMerge>
+      <feMergeNode in="blur"/>           <!-- largest blurs coloured red -->
+      <feMergeNode in="SourceGraphic"/>  <!-- original white text -->
+    </feMerge>
+  </filter>
+</defs>
+)");
+
+
+
     size_t offsetX{}, offsetY{}, treeNbr{};
     for (auto search : _scheme) {
         treeNbr += 1;

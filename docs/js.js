@@ -59,8 +59,23 @@ let search_scheme_reload = () => {
                 clearHovers();
                 let nodeName = e.target.getAttribute("data-node-name");
                 console.log("selecting: " + ".child-of-" + nodeName);
+                e.target.setAttribute("data-hovered", "true");
                 for (let child of document.querySelectorAll(".child-of-" + nodeName)) {
                     child.setAttribute("data-hovered", "true");
+                }
+            }
+            c.onclick = (e) => {
+                let nodeName = e.target.getAttribute("data-node-name");
+                if (e.target.getAttribute("data-selected") == "true") {
+                    e.target.removeAttribute("data-selected");
+                    for (let child of document.querySelectorAll(".child-of-" + nodeName)) {
+                        child.removeAttribute("data-selected");
+                    }
+                } else {
+                    e.target.setAttribute("data-selected", "true");
+                    for (let child of document.querySelectorAll(".child-of-" + nodeName)) {
+                        child.setAttribute("data-selected", "true");
+                    }
                 }
             }
         }
