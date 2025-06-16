@@ -67,7 +67,10 @@ auto convertToSvg(fmindex_collection::search_scheme::Scheme _scheme, int newLen,
         assert(isValid(search));
         auto os = expand(search, newLen);
         assert(os);
-        auto s = limitToHamming(*os);
+        auto s = *os;
+        if (!editdistance) {
+            s = limitToHamming(*os);
+        }
 
         // compute largest x/y
         size_t maxX{}, maxY{};
@@ -92,7 +95,10 @@ auto convertToSvg(fmindex_collection::search_scheme::Scheme _scheme, int newLen,
         assert(isValid(search));
         auto os = expand(search, newLen);
         assert(os);
-        auto s = limitToHamming(*os);
+        auto s = *os;
+        if (!editdistance) {
+            s = limitToHamming(*os);
+        }
 
         // compute largest x/y
         size_t maxX{}, maxY{};

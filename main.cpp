@@ -138,6 +138,8 @@ auto nodeCount(std::string text, size_t len, size_t sigma, bool editdistance) ->
     if (editdistance) {
         return nodeCount</*.Edit=*/true>(os, sigma) + os.size();
     }
+    os = limitToHamming(os);
+
     return nodeCount</*.Edit=*/false>(os, sigma) + os.size();
 }
 auto weightedNodeCount(std::string text, size_t len, size_t sigma, bool editdistance) -> double {
@@ -146,6 +148,7 @@ auto weightedNodeCount(std::string text, size_t len, size_t sigma, bool editdist
     if (editdistance) {
         return weightedNodeCount</*.Edit=*/true>(os, sigma, 1'000'000'000) + os.size();
     }
+    os = limitToHamming(os);
     return weightedNodeCount</*.Edit=*/false>(os, sigma, 1'000'000'000) + os.size();
 }
 
