@@ -32,11 +32,7 @@ auto visitTree(fmindex_collection::search_scheme::Search s, size_t x, size_t pos
 
         // insertions
         if (editdistance) {
-            size_t extra = 1;
-            if (pos+1 >= s.pi.size()) { // avoid last node dropping out at the bottom
-                extra = 0;
-            }
-            cb(x+width, pos+extra, 3, [&]() {
+            cb(x+width, pos, 3, [&]() {
                 width += visitTree(s, x+width, pos+1, sigma, cb, errors+1, editdistance);
             });
         }
