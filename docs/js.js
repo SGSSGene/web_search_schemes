@@ -42,10 +42,28 @@ let search_scheme_reload = () => {
         vis_nodecounttag.value = nodeCount;
         vis_weightednodecounttag.value = weightedNodeCount;
 
-//        console.log(data.length);
-//        console.log(data);
         canvastag.innerHTML = data;
         errorfieldtag.innerHTML = "";
+        let clearHovers = () => {
+            for (let e of document.querySelectorAll('[data-hovered="true"]')) {
+                e.removeAttribute("data-hovered");
+            }
+        }
+
+        let circles = document.querySelectorAll("circle");
+        for (let c of circles) {
+            c.onmouseleave = (e) => {
+                clearHovers();
+            }
+            c.onmouseenter = (e) => {
+                clearHovers();
+                let nodeName = e.target.getAttribute("data-node-name");
+                console.log("selecting: " + ".child-of-" + nodeName);
+                for (let child of document.querySelectorAll(".child-of-" + nodeName)) {
+                    child.setAttribute("data-hovered", "true");
+                }
+            }
+        }
     } catch(err) {
         errorfieldtag.innerHTML = escapeHtml(err.message);
         console.log("error: " + err);

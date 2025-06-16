@@ -23,9 +23,6 @@ target_link_options(search_schemes.js PUBLIC
 target_link_libraries(search_schemes.js
     fmindex-collection::fmindex-collection
     fmt::fmt
-    ivio::ivio
-    ivsigma::ivsigma
-    clice::clice
     embind
 )
 target_compile_features(search_schemes.js PUBLIC cxx_std_23)

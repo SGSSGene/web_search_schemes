@@ -90,8 +90,9 @@ auto convertToSvg(fmindex_collection::search_scheme::Scheme _scheme, int newLen,
 
     auto out = fmt::format(R"(<svg viewBox="{} {} {} {}" xmlns="http://www.w3.org/2000/svg">{})", -int(spaceBetweenNodes), -int(spaceBetweenNodes)/2, tmaxX+spaceBetweenNodes*2, tmaxY+spaceBetweenNodes, "\n");
 
-    size_t offsetX{}, offsetY{};
+    size_t offsetX{}, offsetY{}, treeNbr{};
     for (auto search : _scheme) {
+        treeNbr += 1;
         assert(isValid(search));
         auto os = expand(search, newLen);
         assert(os);
@@ -133,6 +134,7 @@ auto convertToSvg(fmindex_collection::search_scheme::Scheme _scheme, int newLen,
             }
         }
 
+
         // draw connecting lines
         {
             auto node = std::vector<std::tuple<size_t, size_t>>{};
@@ -155,7 +157,12 @@ auto convertToSvg(fmindex_collection::search_scheme::Scheme _scheme, int newLen,
                     stroke = R"(stroke-dasharray="1 2")";
                 }
 
-                out += fmt::format(R"(<line x1="{}" y1="{}" x2="{}" y2="{}" stroke="black" {} />{})", offsetX+px, offsetY+py, offsetX+x, offsetY+y, stroke, "\n");
+                auto classes = std::string{};
+                for (auto [x, y] : node) {
+                    classes += fmt::format(" child-of-node-{}-{}-{}", treeNbr, x, y);
+                }
+
+                out += fmt::format(R"(<line x1="{}" y1="{}" x2="{}" y2="{}" class="{}" stroke="black" {} />{})", offsetX+px, offsetY+py, offsetX+x, offsetY+y, classes, stroke, "\n");
 
                 node.emplace_back(x, y);
                 rec();
@@ -165,7 +172,7 @@ auto convertToSvg(fmindex_collection::search_scheme::Scheme _scheme, int newLen,
         // draw circles
         {
             // walk through and detect tree sizes
-            out += fmt::format(R"(<circle cx="{}" cy="{}" r="{}" />{})", 0+offsetX, 0+offsetY, spaceBetweenNodes/3, "\n");
+            out += fmt::format(R"(<circle cx="{}" cy="{}" r="{}" data-node-name="node-{}-0-0" class="node-0-0" />{})", 0+offsetX, 0+offsetY, spaceBetweenNodes/3, treeNbr, "\n");
 
             auto node = std::vector<std::tuple<size_t, size_t>>{};
             node.emplace_back(0, 0);
@@ -174,10 +181,15 @@ auto convertToSvg(fmindex_collection::search_scheme::Scheme _scheme, int newLen,
                 auto x = _x*spaceBetweenNodes;
                 auto y = (1+pos)*spaceBetweenNodes;
 
+                auto classes = std::string{};
+                for (auto [x, y] : node) {
+                    classes += fmt::format(" child-of-node-{}-{}-{}", treeNbr, x, y);
+                }
+
                 if (dir == 2) {
                     y += 1;
                 }
-                out += fmt::format(R"(<circle cx="{}" cy="{}" r="{}" />{})", offsetX + x, offsetY+y, spaceBetweenNodes/3, "\n");
+                out += fmt::format(R"(<circle cx="{}" cy="{}" r="{}" data-node-name="node-{}-{}-{}", class="{}" />{})", offsetX + x, offsetY+y, spaceBetweenNodes/3, treeNbr, x, y, classes, "\n");
 
                 node.emplace_back(x, y);
                 rec();
