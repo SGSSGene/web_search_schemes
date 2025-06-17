@@ -119,3 +119,9 @@ svg > text {
     dominant-baseline: central;
 }
 
+#footer {
+    display: flex;
+    justify-content: end;
+    flex-grow: 1;
+    flex-direction: column;
+}
