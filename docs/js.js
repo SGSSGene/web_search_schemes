@@ -80,8 +80,7 @@ let search_scheme_reload = () => {
             }
         }
     } catch(err) {
-        errorfieldtag.innerHTML = escapeHtml(err.message);
-        console.log("error: " + err);
+        errorfieldtag.innerHTML = escapeHtml(getExceptionMessage(err).toString());
     }
 }
 let regenerate = () => {

@@ -18,6 +18,7 @@ target_link_options(search_schemes.js PUBLIC
     -sNO_DISABLE_EXCEPTION_CATCHING
     -sALLOW_MEMORY_GROWTH=1
     -sTOTAL_STACK=4MB
+    -sEXPORT_EXCEPTION_HANDLING_HELPERS
 )
 
 target_link_libraries(search_schemes.js
