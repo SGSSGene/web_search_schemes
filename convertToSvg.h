@@ -55,7 +55,7 @@ void visitTree(fmindex_collection::search_scheme::Search s, size_t sigma, bool e
     visitTree(s, 0, 0, sigma, cb, 0, editdistance);
 }
 
-auto convertToSvg(fmindex_collection::search_scheme::Scheme _scheme, int newLen, size_t sigma, bool editdistance) -> std::string {
+auto convertToSvg(fmindex_collection::search_scheme::Scheme _scheme, int newLen, size_t sigma, bool editdistance, size_t treeNbrOffset=0) -> std::string {
 
     //editdistance // todo
 
@@ -118,7 +118,7 @@ auto convertToSvg(fmindex_collection::search_scheme::Scheme _scheme, int newLen,
 
 
 
-    size_t offsetX{}, offsetY{}, treeNbr{};
+    size_t offsetX{}, offsetY{}, treeNbr{treeNbrOffset};
     for (auto search : _scheme) {
         treeNbr += 1;
         assert(isValid(search));

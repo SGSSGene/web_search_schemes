@@ -110,7 +110,7 @@ auto convertSearchSchemeToSvgList(std::string text, size_t parts, size_t sigma, 
     auto res = std::vector<std::string>{};
 
     for (auto search : scheme) {
-        res.push_back(convertsvg::convertToSvg({search}, parts, sigma, editdistance));
+        res.push_back(convertsvg::convertToSvg({search}, parts, sigma, editdistance, res.size()));
     }
 
     return res;

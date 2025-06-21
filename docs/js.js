@@ -27,7 +27,7 @@ let search_scheme_reload = () => {
         let alphabet = Number(vis_alphabettag.value);
         let editdistance = vis_editdistancetag.checked;
 
-        let data                  = Module.convertSearchSchemeToSvg(input, parts, alphabet, editdistance);
+        let dataList              = Module.convertSearchSchemeToSvgList(input, parts, alphabet, editdistance);
         let isValid               = Module.isSearchSchemeValid(input);
         let isComplete            = Module.isSearchSchemeComplete(input);
         let isNonRedundant        = Module.isSearchSchemeNonRedundant(input);
@@ -47,7 +47,10 @@ let search_scheme_reload = () => {
         vis_nodecounttag.value = nodeCount;
         vis_weightednodecounttag.value = weightedNodeCount;
 
-        canvastag.innerHTML = data;
+        canvastag.innerHTML = "";
+        for (let i = 0; i < dataList.size(); ++i) {
+            canvastag.innerHTML += dataList.get(i);
+        }
         errorfieldtag.innerHTML = "";
         let clearHovers = () => {
             for (let e of document.querySelectorAll('[data-hovered="true"]')) {

@@ -102,16 +102,17 @@ svg line[data-selected="true"] {
     width: 3em;
 }
 #canvas {
-/*    height: 1000px;
-    width: 1000px*/
-/*    border:1px solid red;*/
-    height: 100%;
-    flex: 33%;
-    overflow: hidden;
+    flex-grow: 1;
+    overflow: scroll;
+    display: flex;
+    flex-wrap: wrap;
 }
 #canvas > svg {
-    width:100%;
-    height:100%;
+    border: 1px solid black;
+    border-radius: 15px;
+    height:50%;
+    margin: 5px auto;
+    padding: 10px;
 }
 #footer {
     display: flex;
