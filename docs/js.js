@@ -152,6 +152,7 @@ schemeinputtag.oninput = () => {
 }
 
 let downloadtag = document.getElementById("download");
+let formatlisttag = document.getElementById("format_list");
 downloadtag.onclick = () => {
     console.log("hallo welt");
     let file1data = "hallo welt\n";
@@ -164,11 +165,19 @@ downloadtag.onclick = () => {
     let alphabet = Number(vis_alphabettag.value);
     let editdistance = vis_editdistancetag.checked;
 
-    let dataList = Module.convertSearchSchemeToSvgList(input, parts, alphabet, editdistance);
+    let dataList = null;
+    let fileEnding = ".txt";
+    if (format_list.value == "svg") {
+        dataList = Module.convertSearchSchemeToSvgList(input, parts, alphabet, editdistance);
+        fileEnding = "svg";
+    } else if (format_list.value == "tikz") {
+        dataList = Module.convertSearchSchemeToTikzList(input, parts);
+        fileEnding = "tikz";
+    }
 
     let filename = `${scheme_name.name}_${scheme_name.min_errors}-${scheme_name.max_errors}`
     for (let i = 0; i < dataList.size(); ++i) {
-        zip.file(`${filename}-${i}.svg`, enc.encode(dataList.get(i)));
+        zip.file(`${filename}-${i}.${fileEnding}`, enc.encode(dataList.get(i)));
     }
 
     zip.generateAsync({type : "blob"})
@@ -178,10 +187,6 @@ downloadtag.onclick = () => {
         link.download = `${filename}.zip`
         link.click();
     });
-
-/*    enc.encode(file1data);
-    TextEncoder
-    new JSZip();*/
 }
 
 window.onload = () => {

@@ -1,5 +1,6 @@
 #include "error_fmt.h"
 #include "convertToSvg.h"
+#include "convertToTikz.h"
 
 #include <emscripten.h>
 #include <emscripten/bind.h>
@@ -116,6 +117,20 @@ auto convertSearchSchemeToSvgList(std::string text, size_t parts, size_t sigma, 
     return res;
 }
 
+auto convertSearchSchemeToTikzList(std::string text, size_t parts) -> std::vector<std::string> {
+    std::cout << "converting search scheme to list of tikz\n";
+    auto scheme = convertSearchScheme(text);
+
+    auto res = std::vector<std::string>{};
+
+    auto counts = fmindex_collection::search_scheme::expandCount(scheme[0].pi.size(), parts);
+
+    for (auto search : scheme) {
+        res.push_back(converttikz::convertToTikz(search, counts, false, 4, true));
+    }
+
+    return res;
+}
 
 auto isSearchSchemeValid(std::string text) -> bool {
     auto scheme = convertSearchScheme(text);
@@ -170,6 +185,7 @@ EMSCRIPTEN_BINDINGS(my_module) {
     emscripten::function("generatorList", &generatorList);
     emscripten::function("convertSearchSchemeToSvg", &convertSearchSchemeToSvg);
     emscripten::function("convertSearchSchemeToSvgList", &convertSearchSchemeToSvgList);
+    emscripten::function("convertSearchSchemeToTikzList", &convertSearchSchemeToTikzList);
     emscripten::function("isSearchSchemeValid", &isSearchSchemeValid);
     emscripten::function("isSearchSchemeComplete", &isSearchSchemeComplete);
     emscripten::function("isSearchSchemeNonRedundant", &isSearchSchemeNonRedundant);
