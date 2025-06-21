@@ -6,10 +6,9 @@
         <meta charset="utf-8" />
         <meta content="width=device-width, initial-scale=1, interactive-widget=resizes-content" name="viewport" />
         <link href="style.css" rel="stylesheet" />
-        <script defer src="search_schemes.js.js" type="text/javascript" >
-        </script>
-        <script defer src="js.js" type="text/javascript" >
-        </script>
+        <script defer src="jszip.min.js" type="text/javascript" ></script>
+        <script defer src="search_schemes.js.js" type="text/javascript" ></script>
+        <script defer src="js.js" type="text/javascript" ></script>
     </head>
     <body>
         <div id="dialog_loading">
@@ -38,6 +37,8 @@
                     <span>parts:</span><input id="vis_parts" type="number" class="int" value="8">
                     <span>alphabet:</span><input id="vis_alphabet" type="number" class="int" value="2">
                     <span>edit distance:</span><input id="vis_editdistance" type="checkbox" value="false">
+                    <span></span><button id="download">export</button>
+
                 </div>
             </form>
             <form id="stats">

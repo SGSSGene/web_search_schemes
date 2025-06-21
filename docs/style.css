@@ -113,12 +113,6 @@ svg line[data-selected="true"] {
     width:100%;
     height:100%;
 }
-svg > text {
-    font-size: 6px;
-    text-anchor: start;
-    dominant-baseline: central;
-}
-
 #footer {
     display: flex;
     justify-content: end;

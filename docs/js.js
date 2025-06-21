@@ -14,6 +14,11 @@ let vis_nonredundanttag      = document.getElementById("vis_nonredundant");
 let vis_nodecounttag         = document.getElementById("vis_nodecount");
 let vis_weightednodecounttag = document.getElementById("vis_weightednodecount");
 
+let scheme_name = {
+    name: "custom",
+    min_errors: 0,
+    max_errors: 0
+};
 
 let search_scheme_reload = () => {
     let input = schemeinput.value + "\n";
@@ -96,6 +101,13 @@ let regenerate = () => {
     let gen = generator_listtag.value;
     let minK = generator_min_errorstag.value;
     let maxK = generator_max_errorstag.value;
+
+    scheme_name = {
+        name: gen,
+        min_errors: minK,
+        max_errors: maxK
+    };
+
     //console.log(`generator ${gen} for ${minK}-${maxK} errors`);
     schemeinputtag.value = Module.generateSearchScheme(gen, Number(minK), Number(maxK));
     search_scheme_reload();
@@ -131,7 +143,42 @@ function escapeHtml(unsafe) {
 
 schemeinputtag.oninput = () => {
     console.log("hitting some key");
+    scheme_name.name = "custom";
+
     search_scheme_reload();
+}
+
+let downloadtag = document.getElementById("download");
+downloadtag.onclick = () => {
+    console.log("hallo welt");
+    let file1data = "hallo welt\n";
+    let file2data = "foobar\n";
+    let enc = new TextEncoder();
+    let zip = new JSZip();
+
+    let input = schemeinput.value + "\n";
+    let parts = Number(vis_partstag.value);
+    let alphabet = Number(vis_alphabettag.value);
+    let editdistance = vis_editdistancetag.checked;
+
+    let dataList = Module.convertSearchSchemeToSvgList(input, parts, alphabet, editdistance);
+
+    let filename = `${scheme_name.name}_${scheme_name.min_errors}-${scheme_name.max_errors}`
+    for (let i = 0; i < dataList.size(); ++i) {
+        zip.file(`${filename}-${i}.svg`, enc.encode(dataList.get(i)));
+    }
+
+    zip.generateAsync({type : "blob"})
+    .then((zipData)=> {
+        const link = document.createElement('a');
+        link.href = window.URL.createObjectURL(zipData);
+        link.download = `${filename}.zip`
+        link.click();
+    });
+
+/*    enc.encode(file1data);
+    TextEncoder
+    new JSZip();*/
 }
 
 window.onload = () => {

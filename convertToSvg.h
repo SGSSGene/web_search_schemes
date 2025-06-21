@@ -89,6 +89,19 @@ auto convertToSvg(fmindex_collection::search_scheme::Scheme _scheme, int newLen,
 
     auto out = fmt::format(R"(<svg viewBox="{} {} {} {}" xmlns="http://www.w3.org/2000/svg">{})", -int(spaceBetweenNodes), -int(spaceBetweenNodes)/2, tmaxX+spaceBetweenNodes*2, tmaxY+spaceBetweenNodes, "\n");
 
+    // add some css
+    out += R"(
+  <style type="text/css">
+    <![CDATA[
+      text {
+        font-size: 6px;
+        text-anchor: start;
+        dominant-baseline: central;
+    }
+    ]]>
+  </style>
+)";
+
     // add some glow effect filter:
     out += fmt::format(R"(
 <defs>
@@ -207,7 +220,7 @@ auto convertToSvg(fmindex_collection::search_scheme::Scheme _scheme, int newLen,
                 if (dir == 2) {
                     y += 1;
                 }
-                out += fmt::format(R"(<circle cx="{}" cy="{}" r="{}" data-node-name="node-{}-{}-{}", class="{}" />{})", offsetX + x, offsetY+y, spaceBetweenNodes/3, treeNbr, x, y, classes, "\n");
+                out += fmt::format(R"(<circle cx="{}" cy="{}" r="{}" data-node-name="node-{}-{}-{}" class="{}" />{})", offsetX + x, offsetY+y, spaceBetweenNodes/3, treeNbr, x, y, classes, "\n");
 
                 node.emplace_back(x, y);
                 rec();

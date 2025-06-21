@@ -104,6 +104,19 @@ auto convertSearchSchemeToSvg(std::string text, size_t parts, size_t sigma, bool
     return res;
 }
 
+auto convertSearchSchemeToSvgList(std::string text, size_t parts, size_t sigma, bool editdistance) -> std::vector<std::string> {
+    std::cout << "converting search scheme to list of svgs\n";
+    auto scheme = convertSearchScheme(text);
+    auto res = std::vector<std::string>{};
+
+    for (auto search : scheme) {
+        res.push_back(convertsvg::convertToSvg({search}, parts, sigma, editdistance));
+    }
+
+    return res;
+}
+
+
 auto isSearchSchemeValid(std::string text) -> bool {
     auto scheme = convertSearchScheme(text);
     return isValid(scheme);
@@ -156,6 +169,7 @@ EMSCRIPTEN_BINDINGS(my_module) {
     emscripten::register_vector<std::string>("vector<string>");
     emscripten::function("generatorList", &generatorList);
     emscripten::function("convertSearchSchemeToSvg", &convertSearchSchemeToSvg);
+    emscripten::function("convertSearchSchemeToSvgList", &convertSearchSchemeToSvgList);
     emscripten::function("isSearchSchemeValid", &isSearchSchemeValid);
     emscripten::function("isSearchSchemeComplete", &isSearchSchemeComplete);
     emscripten::function("isSearchSchemeNonRedundant", &isSearchSchemeNonRedundant);
