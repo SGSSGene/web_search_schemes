@@ -53,6 +53,7 @@ h2 {
 #settings {
     display: flex;
     flex-direction: row;
+    margin: auto;
 }
 #generator, #inputfield, #visualization, #stats {
     border: 1px solid black;
@@ -103,15 +104,15 @@ svg line[data-selected="true"] {
 }
 #canvas {
     flex-grow: 1;
-    overflow: scroll;
     display: flex;
     flex-wrap: wrap;
+    justify-content: center;
 }
 #canvas > svg {
     border: 1px solid black;
     border-radius: 15px;
-    height:50%;
-    margin: 5px auto;
+    max-height: 33vh;
+    margin: 5px 5px;
     padding: 10px;
 }
 #footer {
