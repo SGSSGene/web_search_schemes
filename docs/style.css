@@ -67,6 +67,11 @@ h2 {
     flex-grow: 1;
 }
 
+#visualization input {
+    width: 4em;
+}
+
+
 #stats input[readonly] {
     background-color: #CCCCCC;
 }
@@ -76,6 +81,10 @@ h2 {
 }
 #stats input {
     width: 4em;
+}
+
+.invisible {
+    display: none;
 }
 
 svg circle {
