@@ -34,11 +34,12 @@
             <form id="visualization">
                 <h2>Visualization</h2>
                 <div class="two_columns">
-                    <span>parts:</span><input id="vis_parts" type="number" class="int" value="8">
-                    <span>alphabet:</span><input id="vis_alphabet" type="number" class="int" value="2">
-                    <span>edit distance:</span><input id="vis_editdistance" type="checkbox" value="false">
-                    <span><span>format:</span> <select id="format_list"><option value="svg">svg</option><option value="tikz">tikz</option></select></span>
-                    <button id="download">export</button>
+                    <span>query len:</span><input id="vis_parts" type="number" class="int" value="8">
+                    <span>format:</span> <select id="format_list"><option value="svg">svg</option><option value="tikz">tikz</option></select>
+                    <span class="svg export-only">alphabet:</span><input class="svg export-only" id="vis_alphabet" type="number" class="int" value="2">
+                    <span class="svg export-only">edit distance:</span><input class="svg export-only" id="vis_editdistance" type="checkbox" value="false">
+                    <span class="tikz export-only">display op:</span><input class="tikz export-only" id="vis_display_operation" type="checkbox" value="false">
+                    <button id="download">export</button><span></span>
 
                 </div>
             </form>

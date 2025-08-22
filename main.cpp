@@ -117,7 +117,7 @@ auto convertSearchSchemeToSvgList(std::string text, size_t parts, size_t sigma, 
     return res;
 }
 
-auto convertSearchSchemeToTikzList(std::string text, size_t parts) -> std::vector<std::string> {
+auto convertSearchSchemeToTikzList(std::string text, size_t parts, bool displayOperation) -> std::vector<std::string> {
     std::cout << "converting search scheme to list of tikz\n";
     auto scheme = convertSearchScheme(text);
 
@@ -126,7 +126,7 @@ auto convertSearchSchemeToTikzList(std::string text, size_t parts) -> std::vecto
     auto counts = fmindex_collection::search_scheme::expandCount(scheme[0].pi.size(), parts);
 
     for (auto search : scheme) {
-        res.push_back(converttikz::convertToTikz(search, counts, false, 4, true));
+        res.push_back(converttikz::convertToTikz(search, counts, displayOperation, /*.fontSize=*/4, /*.zeroIndex=*/true));
     }
 
     return res;

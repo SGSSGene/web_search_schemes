@@ -8,11 +8,14 @@ let canvastag                = document.getElementById("canvas");
 let vis_partstag             = document.getElementById("vis_parts");
 let vis_alphabettag          = document.getElementById("vis_alphabet");
 let vis_editdistancetag      = document.getElementById("vis_editdistance");
+let vis_showoperatontag      = document.getElementById("vis_display_operation");
 let vis_validtag             = document.getElementById("vis_valid");
 let vis_completetag          = document.getElementById("vis_complete");
 let vis_nonredundanttag      = document.getElementById("vis_nonredundant");
 let vis_nodecounttag         = document.getElementById("vis_nodecount");
 let vis_weightednodecounttag = document.getElementById("vis_weightednodecount");
+let formatlisttag = document.getElementById("format_list");
+formatlisttag.value = "svg";
 
 let scheme_name = {
     name: "custom",
@@ -26,6 +29,11 @@ let search_scheme_reload = () => {
         let parts = Number(vis_partstag.value);
         let alphabet = Number(vis_alphabettag.value);
         let editdistance = vis_editdistancetag.checked;
+
+        if (formatlisttag.value == "tikz") {
+            alphabet = 2;
+            editDistance = false;
+        }
 
         let dataList              = Module.convertSearchSchemeToSvgList(input, parts, alphabet, editdistance);
         let isValid               = Module.isSearchSchemeValid(input);
@@ -152,12 +160,34 @@ schemeinputtag.oninput = () => {
 }
 
 let downloadtag = document.getElementById("download");
-let formatlisttag = document.getElementById("format_list");
+
+let only_tikz_tags = document.getElementsByClassName("tikz export-only");
+for (let e of only_tikz_tags) {
+    e.classList.add("invisible");
+}
+
+formatlisttag.onclick = (e) => {
+    let export_only_tags = document.getElementsByClassName("export-only");
+    for (e of export_only_tags) {
+        e.classList.add("invisible");
+    }
+
+    if (formatlisttag.value == "svg") {
+        let only_svg_tags = document.getElementsByClassName("svg export-only");
+        for (let e of only_svg_tags) {
+            e.classList.remove("invisible");
+        }
+    } else if (formatlisttag.value == "tikz") {
+        let only_tikz_tags = document.getElementsByClassName("tikz export-only");
+        for (let e of only_tikz_tags) {
+            e.classList.remove("invisible");
+        }
+    }
+    search_scheme_reload();
+}
 downloadtag.onclick = (e) => {
     e.preventDefault();
-    console.log("hallo welt");
-    let file1data = "hallo welt\n";
-    let file2data = "foobar\n";
+
     let enc = new TextEncoder();
     let zip = new JSZip();
 
@@ -165,14 +195,15 @@ downloadtag.onclick = (e) => {
     let parts = Number(vis_partstag.value);
     let alphabet = Number(vis_alphabettag.value);
     let editdistance = vis_editdistancetag.checked;
+    let showOperations = vis_showoperatontag.checked;
 
     let dataList = null;
     let fileEnding = ".txt";
-    if (format_list.value == "svg") {
+    if (formatlisttag.value == "svg") {
         dataList = Module.convertSearchSchemeToSvgList(input, parts, alphabet, editdistance);
         fileEnding = "svg";
-    } else if (format_list.value == "tikz") {
-        dataList = Module.convertSearchSchemeToTikzList(input, parts);
+    } else if (formatlisttag.value == "tikz") {
+        dataList = Module.convertSearchSchemeToTikzList(input, parts, showOperations);
         fileEnding = "tikz";
     }
 
