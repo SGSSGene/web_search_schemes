@@ -153,7 +153,8 @@ schemeinputtag.oninput = () => {
 
 let downloadtag = document.getElementById("download");
 let formatlisttag = document.getElementById("format_list");
-downloadtag.onclick = () => {
+downloadtag.onclick = (e) => {
+    e.preventDefault();
     console.log("hallo welt");
     let file1data = "hallo welt\n";
     let file2data = "foobar\n";
